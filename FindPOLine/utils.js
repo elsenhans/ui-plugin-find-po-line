@@ -1,4 +1,3 @@
-import { useCustomFields } from '@folio/stripes/smart-components';
 import {
   buildArrayFieldQuery,
   buildDateRangeQuery,
@@ -12,7 +11,6 @@ import {
 } from '@folio/stripes-acq-components';
 
 import {
-  CUSTOM_FIELDS_BACKEND_MODULE_NAME,
   CUSTOM_FIELD_TYPES,
   FILTERS,
   QUALIFIER_SEPARATOR,
@@ -114,15 +112,14 @@ export const getNormalizedISBN = async (isbnNumber, ky) => {
   }
 };
 
-export function getLinesQuery(queryParams, ky) {
-  const [customFields, isLoadingCustomFields] = useCustomFields(CUSTOM_FIELDS_BACKEND_MODULE_NAME, 'po_line');
+export function getLinesQuery(queryParams, ky, customFields) {
   const isISBNSearch = queryParams[SEARCH_INDEX_PARAMETER] === 'productIdISBN';
   const isbnNumber = queryParams[SEARCH_PARAMETER]?.split(QUALIFIER_SEPARATOR)[0];
 
   return async () => {
     const isbnData = await (isISBNSearch ? getNormalizedISBN(isbnNumber, ky) : Promise.resolve({}));
 
-    if (isbnData?.isError || isLoadingCustomFields) return undefined;
+    if (isbnData?.isError) return undefined;
 
     return buildOrderLinesQuery(queryParams, isbnData?.isbn, isbnData?.isbnType, customFields);
   };
