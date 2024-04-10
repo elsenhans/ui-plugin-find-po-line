@@ -6,6 +6,15 @@ import {
   RECEIPT_STATUS,
 } from '@folio/stripes-acq-components';
 
+export const CUSTOM_FIELDS_BACKEND_MODULE_NAME = 'Orders CRUD module';
+
+export const CUSTOM_FIELD_TYPES = {
+  DATE_PICKER: 'DATE_PICKER',
+  MULTI_SELECT_DROPDOWN: 'MULTI_SELECT_DROPDOWN',
+  TEXTBOX_LONG: 'TEXTBOX_LONG',
+  TEXTBOX_SHORT: 'TEXTBOX_SHORT',
+};
+
 export const FILTERS = {
   ACCESS_PROVIDER: 'accessProvider',
   ACQUISITION_METHOD: 'acquisitionMethod',
@@ -16,6 +25,7 @@ export const FILTERS = {
   CLAIM_SENT: 'sent',
   CLAIM: 'claims',
   COLLECTION: 'collection',
+  CUSTOM_FIELDS: 'customFields',
   DATE_CREATED: 'createdDate',
   DONOR: 'donorOrganizationIds',
   EXPECTED_ACTIVATION_DATE: 'expectedActivation',

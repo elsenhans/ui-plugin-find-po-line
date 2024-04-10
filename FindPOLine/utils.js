@@ -1,3 +1,4 @@
+import { useCustomFields } from '@folio/stripes/smart-components';
 import {
   buildArrayFieldQuery,
   buildDateRangeQuery,
@@ -10,7 +11,12 @@ import {
   IDENTIFIER_TYPES_API,
 } from '@folio/stripes-acq-components';
 
-import { FILTERS, QUALIFIER_SEPARATOR } from './constants';
+import {
+  CUSTOM_FIELDS_BACKEND_MODULE_NAME,
+  CUSTOM_FIELD_TYPES,
+  FILTERS,
+  QUALIFIER_SEPARATOR,
+} from './constants';
 import { getKeywordQuery } from './OrderLinesSearchConfig';
 
 function defaultSearchFn(query, qindex) {
@@ -33,7 +39,26 @@ export const getDateRangeValueAsString = (filterValue = '') => {
   return filterValue;
 };
 
-export const buildOrderLinesQuery = (queryParams, isbnId, normalizedISBN) => {
+const getCustomFieldsFilterMap = async (customFields) => {
+  const result = {};
+
+  if (customFields) {
+    for (let i = 0; i < customFields.length; i++) {
+      const cf = await customFields[i];
+      const fieldName = `${FILTERS.CUSTOM_FIELDS}.${cf.refId}`;
+
+      if (cf.type === CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN) {
+        result[fieldName] = await buildArrayFieldQuery.bind(null, fieldName);
+      } else if (cf.type === CUSTOM_FIELD_TYPES.DATE_PICKER) {
+        result[fieldName] = await buildDateTimeRangeQuery.bind(null, fieldName);
+      }
+    };
+  }
+
+  return result;
+};
+
+export const buildOrderLinesQuery = (queryParams, isbnId, normalizedISBN, customFields) => {
   const searchFn = normalizedISBN
     ? () => `details.productIds all \\"productId\\": \\"${normalizedISBN}\\"  AND details.productIds all  \\"productIdType\\": \\"${isbnId}\\"`
     : defaultSearchFn;
@@ -62,6 +87,7 @@ export const buildOrderLinesQuery = (queryParams, isbnId, normalizedISBN) => {
       [FILTERS.ACCESS_PROVIDER]: (filterValue) => `eresource.${FILTERS.ACCESS_PROVIDER} == ${filterValue}`,
       [FILTERS.ACTIVATED]: (filterValue) => `eresource.${FILTERS.ACTIVATED} == ${filterValue}`,
       [FILTERS.TRIAL]: (filterValue) => `eresource.${FILTERS.TRIAL} == ${filterValue}`,
+      ...getCustomFieldsFilterMap(customFields),
     },
   );
 
@@ -90,14 +116,15 @@ export const getNormalizedISBN = async (isbnNumber, ky) => {
 };
 
 export function getLinesQuery(queryParams, ky) {
+  const [customFields, isLoadingCustomFields] = useCustomFields(CUSTOM_FIELDS_BACKEND_MODULE_NAME, 'po_line');
   const isISBNSearch = queryParams[SEARCH_INDEX_PARAMETER] === 'productIdISBN';
   const isbnNumber = queryParams[SEARCH_PARAMETER]?.split(QUALIFIER_SEPARATOR)[0];
 
   return async () => {
     const isbnData = await (isISBNSearch ? getNormalizedISBN(isbnNumber, ky) : Promise.resolve({}));
 
-    if (isbnData?.isError) return undefined;
+    if (isbnData?.isError || isLoadingCustomFields) return undefined;
 
-    return buildOrderLinesQuery(queryParams, isbnData?.isbn, isbnData?.isbnType);
+    return buildOrderLinesQuery(queryParams, isbnData?.isbn, isbnData?.isbnType, customFields);
   };
 }
