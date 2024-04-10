@@ -39,12 +39,11 @@ export const getDateRangeValueAsString = (filterValue = '') => {
   return filterValue;
 };
 
-const getCustomFieldsFilterMap = (customFields) => {
+export const getCustomFieldsFilterMap = (customFields) => {
   const result = {};
 
   if (customFields) {
-    for (let i = 0; i < customFields.length; i++) {
-      const cf = customFields[i];
+    customFields.forEach((cf) => {
       const fieldName = `${FILTERS.CUSTOM_FIELDS}.${cf.refId}`;
 
       if (cf.type === CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN) {
@@ -52,7 +51,7 @@ const getCustomFieldsFilterMap = (customFields) => {
       } else if (cf.type === CUSTOM_FIELD_TYPES.DATE_PICKER) {
         result[fieldName] = buildDateTimeRangeQuery.bind(null, fieldName);
       }
-    };
+    });
   }
 
   return result;
