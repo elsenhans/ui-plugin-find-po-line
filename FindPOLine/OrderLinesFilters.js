@@ -8,6 +8,7 @@ import {
   AcqCheckboxFilter,
   AcqTagsFilter,
   AcqUnitFilter,
+  CustomFieldsFilters,
   LocationFilterContainer,
   SourceFilter,
   ORDER_FORMAT_OPTIONS,
@@ -34,7 +35,14 @@ import { getDateRangeValueAsString } from './utils';
 
 const applyFiltersAdapter = (applyFilters) => ({ name, values }) => applyFilters(name, values);
 
-export function OrderLinesFilters({ activeFilters, applyFilters, disabled, funds = [], materialTypes = [] }) {
+export function OrderLinesFilters({
+  activeFilters,
+  applyFilters,
+  customFields,
+  disabled,
+  funds = [],
+  materialTypes = []
+}) {
   const adaptedApplyFilters = useCallback(
     (filter) => applyFiltersAdapter(applyFilters)(filter),
     [applyFilters],
@@ -331,6 +339,14 @@ export function OrderLinesFilters({ activeFilters, applyFilters, disabled, funds
         name={FILTERS.DATE_UPDATED}
         onChange={handleDateRangeFilter}
       />
+      <CustomFieldsFilters
+        activeFilters={activeFilters}
+        customFields={customFields}
+        disabled={disabled}
+        id={FILTERS.CUSTOM_FIELDS}
+        name={FILTERS.CUSTOM_FIELDS}
+        onChange={adaptedApplyFilters}
+      />
     </AccordionSet>
   );
 }
@@ -338,6 +354,7 @@ export function OrderLinesFilters({ activeFilters, applyFilters, disabled, funds
 OrderLinesFilters.propTypes = {
   applyFilters: PropTypes.func.isRequired,
   activeFilters: PropTypes.object.isRequired,
+  customFields: PropTypes.arrayOf(PropTypes.object),
   disabled: PropTypes.bool,
   funds: PropTypes.arrayOf(PropTypes.object),
   materialTypes: PropTypes.arrayOf(PropTypes.object),
