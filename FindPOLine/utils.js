@@ -39,18 +39,18 @@ export const getDateRangeValueAsString = (filterValue = '') => {
   return filterValue;
 };
 
-const getCustomFieldsFilterMap = async (customFields) => {
+const getCustomFieldsFilterMap = (customFields) => {
   const result = {};
 
   if (customFields) {
     for (let i = 0; i < customFields.length; i++) {
-      const cf = await customFields[i];
+      const cf = customFields[i];
       const fieldName = `${FILTERS.CUSTOM_FIELDS}.${cf.refId}`;
 
       if (cf.type === CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN) {
-        result[fieldName] = await buildArrayFieldQuery.bind(null, fieldName);
+        result[fieldName] = buildArrayFieldQuery.bind(null, fieldName);
       } else if (cf.type === CUSTOM_FIELD_TYPES.DATE_PICKER) {
-        result[fieldName] = await buildDateTimeRangeQuery.bind(null, fieldName);
+        result[fieldName] = buildDateTimeRangeQuery.bind(null, fieldName);
       }
     };
   }
