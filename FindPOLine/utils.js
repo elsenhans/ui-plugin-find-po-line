@@ -112,7 +112,7 @@ export const getNormalizedISBN = async (isbnNumber, ky) => {
   }
 };
 
-export function getLinesQuery(queryParams, ky, customFields) {
+export function getLinesQuery(queryParams, ky, customFields, isLoadingCustomFields) {
   const isISBNSearch = queryParams[SEARCH_INDEX_PARAMETER] === 'productIdISBN';
   const isbnNumber = queryParams[SEARCH_PARAMETER]?.split(QUALIFIER_SEPARATOR)[0];
 
@@ -120,6 +120,7 @@ export function getLinesQuery(queryParams, ky, customFields) {
     const isbnData = await (isISBNSearch ? getNormalizedISBN(isbnNumber, ky) : Promise.resolve({}));
 
     if (isbnData?.isError) return undefined;
+    if (isLoadingCustomFields) return undefined;
 
     return buildOrderLinesQuery(queryParams, isbnData?.isbn, isbnData?.isbnType, customFields);
   };
