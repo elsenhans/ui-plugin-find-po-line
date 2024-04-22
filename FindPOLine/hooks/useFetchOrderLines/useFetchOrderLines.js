@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import moment from 'moment';
 
-import { useCustomFields } from '@folio/stripes/smart-components';
 import {
   useOkapiKy,
   useStripes,
@@ -12,7 +11,6 @@ import {
   PLUGIN_RESULT_COUNT_INCREMENT,
 } from '@folio/stripes-acq-components';
 
-import { CUSTOM_FIELDS_BACKEND_MODULE_NAME } from '../../constants';
 import {
   getLinesQuery,
 } from '../../utils';
@@ -26,8 +24,7 @@ export const useFetchOrderLines = () => {
     offset = 0,
     limit = PLUGIN_RESULT_COUNT_INCREMENT,
   }) => {
-    const [customFields, isLoadingCustomFields] = useCustomFields(CUSTOM_FIELDS_BACKEND_MODULE_NAME, 'po_line');
-    const buildLinesQuery = getLinesQuery(searchParams, ky, customFields, isLoadingCustomFields);
+    const buildLinesQuery = getLinesQuery(searchParams, ky);
     const filtersCount = getFiltersCount(searchParams);
 
     if (!filtersCount) {
