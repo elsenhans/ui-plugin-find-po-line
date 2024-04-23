@@ -8,6 +8,7 @@ import {
   AcqCheckboxFilter,
   AcqTagsFilter,
   AcqUnitFilter,
+  CUSTOM_FIELDS_FILTER,
   CustomFieldsFilters,
   LocationFilterContainer,
   SourceFilter,
@@ -41,7 +42,7 @@ export function OrderLinesFilters({
   customFields,
   disabled,
   funds = [],
-  materialTypes = []
+  materialTypes = [],
 }) {
   const adaptedApplyFilters = useCallback(
     (filter) => applyFiltersAdapter(applyFilters)(filter),
@@ -343,8 +344,8 @@ export function OrderLinesFilters({
         activeFilters={activeFilters}
         customFields={customFields}
         disabled={disabled}
-        id={FILTERS.CUSTOM_FIELDS}
-        name={FILTERS.CUSTOM_FIELDS}
+        id={CUSTOM_FIELDS_FILTER}
+        name={CUSTOM_FIELDS_FILTER}
         onChange={adaptedApplyFilters}
       />
     </AccordionSet>
