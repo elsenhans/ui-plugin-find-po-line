@@ -5,13 +5,13 @@ import {
   buildFilterQuery,
   buildSortingQuery,
   connectQuery,
+  getCustomFieldsFilterMap,
+  IDENTIFIER_TYPES_API,
   SEARCH_INDEX_PARAMETER,
   SEARCH_PARAMETER,
-  IDENTIFIER_TYPES_API,
 } from '@folio/stripes-acq-components';
 
 import {
-  CUSTOM_FIELD_TYPES,
   FILTERS,
   QUALIFIER_SEPARATOR,
 } from './constants';
@@ -35,24 +35,6 @@ export const getDateRangeValueAsString = (filterValue = '') => {
   }
 
   return filterValue;
-};
-
-export const getCustomFieldsFilterMap = (customFields) => {
-  const result = {};
-
-  if (customFields) {
-    customFields.forEach((cf) => {
-      const fieldName = `${FILTERS.CUSTOM_FIELDS}.${cf.refId}`;
-
-      if (cf.type === CUSTOM_FIELD_TYPES.MULTI_SELECT_DROPDOWN) {
-        result[fieldName] = buildArrayFieldQuery.bind(null, fieldName);
-      } else if (cf.type === CUSTOM_FIELD_TYPES.DATE_PICKER) {
-        result[fieldName] = buildDateTimeRangeQuery.bind(null, fieldName);
-      }
-    });
-  }
-
-  return result;
 };
 
 export const buildOrderLinesQuery = (queryParams, isbnId, normalizedISBN, customFields) => {
