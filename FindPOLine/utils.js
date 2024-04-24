@@ -15,19 +15,21 @@ import {
   FILTERS,
   QUALIFIER_SEPARATOR,
 } from './constants';
-import { getKeywordQuery } from './OrderLinesSearchConfig';
+import { getCqlQuery, getKeywordQuery } from './OrderLinesSearchConfig';
 
-function defaultSearchFn(query, qindex) {
+const defaultSearchFn = (localeDateFormat, customFields = []) => (query, qindex) => {
   if (qindex === 'details.productIds') {
     return `details.productIds = "/@productId = "${query}"* `;
   }
 
   if (qindex) {
-    return `(${qindex}=="*${query}*")`;
+    const cqlQuery = getCqlQuery(query, qindex, localeDateFormat, customFields);
+
+    return `(${qindex}==${cqlQuery})`;
   }
 
-  return getKeywordQuery(query);
-}
+  return getKeywordQuery(query, localeDateFormat, customFields);
+};
 
 export const getDateRangeValueAsString = (filterValue = '') => {
   if (Array.isArray(filterValue)) {
@@ -37,10 +39,10 @@ export const getDateRangeValueAsString = (filterValue = '') => {
   return filterValue;
 };
 
-export const buildOrderLinesQuery = (queryParams, isbnId, normalizedISBN, customFields) => {
+export const buildOrderLinesQuery = (queryParams, isbnId, normalizedISBN, localeDateFormat, customFields) => {
   const searchFn = normalizedISBN
     ? () => `details.productIds all \\"productId\\": \\"${normalizedISBN}\\"  AND details.productIds all  \\"productIdType\\": \\"${isbnId}\\"`
-    : defaultSearchFn;
+    : defaultSearchFn(localeDateFormat, customFields);
 
   const queryParamsFilterQuery = buildFilterQuery(
     queryParams,
@@ -99,7 +101,7 @@ export const getNormalizedISBN = async (isbnNumber, ky) => {
   }
 };
 
-export function getLinesQuery(queryParams, ky, customFields) {
+export function getLinesQuery(queryParams, ky, localeDateFormat, customFields) {
   const isISBNSearch = queryParams[SEARCH_INDEX_PARAMETER] === 'productIdISBN';
   const isbnNumber = queryParams[SEARCH_PARAMETER]?.split(QUALIFIER_SEPARATOR)[0];
 
@@ -108,6 +110,6 @@ export function getLinesQuery(queryParams, ky, customFields) {
 
     if (isbnData?.isError) return undefined;
 
-    return buildOrderLinesQuery(queryParams, isbnData?.isbn, isbnData?.isbnType, customFields);
+    return buildOrderLinesQuery(queryParams, isbnData?.isbn, isbnData?.isbnType, localeDateFormat, customFields);
   };
 }
