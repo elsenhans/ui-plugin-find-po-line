@@ -27,6 +27,7 @@ export const useFetchOrderLines = () => {
     limit = PLUGIN_RESULT_COUNT_INCREMENT,
   }) => {
     const [customFields, isLoadingCustomFields] = useCustomFields(CUSTOM_FIELDS_BACKEND_MODULE_NAME, 'po_line');
+    // TODO: check if this getLinesQuery is called; are customFields needed here?
     const buildLinesQuery = getLinesQuery(searchParams, ky, customFields, isLoadingCustomFields);
     const filtersCount = getFiltersCount(searchParams);
 

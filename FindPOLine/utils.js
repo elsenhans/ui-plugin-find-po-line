@@ -5,9 +5,11 @@ import {
   buildFilterQuery,
   buildSortingQuery,
   connectQuery,
+  DATE_FORMAT,
   SEARCH_INDEX_PARAMETER,
   SEARCH_PARAMETER,
   IDENTIFIER_TYPES_API,
+  // useLocaleDateFormat,
 } from '@folio/stripes-acq-components';
 
 import {
@@ -17,16 +19,34 @@ import {
 } from './constants';
 import { getKeywordQuery } from './OrderLinesSearchConfig';
 
-function defaultSearchFn(query, qindex) {
+const searchByDate = (query, dateFormat) => {
+  const isoDate = moment.utc(query, dateFormat).format(DATE_FORMAT);
+
+  return `${isoDate}*`;
+};
+
+function getCqlQuery(query, qindex, dateFormat, customField) {
+  return customField?.type === CUSTOM_FIELD_TYPES.DATE_PICKER
+    ? searchByDate(query, dateFormat)
+    : `(${qindex}=="*${query}*")`;
+}
+
+const defaultSearchFn = (customFields = []) => (query, qindex) => {
   if (qindex === 'details.productIds') {
     return `details.productIds = "/@productId = "${query}"* `;
   }
 
   if (qindex) {
-    return `(${qindex}=="*${query}*")`;
+    const customField = customFields?.find(
+      (cf) => `${FILTERS.CUSTOM_FIELDS}.${cf.refId}` === qindex,
+    );
+
+    const cqlQuery = getCqlQuery(query, qindex, dateFormat, customField);
+
+    return `(${qindex}=="*${cqlQuery}*")`;
   }
 
-  return getKeywordQuery(query);
+  return getKeywordQuery(query, customFields);
 }
 
 export const getDateRangeValueAsString = (filterValue = '') => {
@@ -58,7 +78,7 @@ export const getCustomFieldsFilterMap = (customFields) => {
 export const buildOrderLinesQuery = (queryParams, isbnId, normalizedISBN, customFields) => {
   const searchFn = normalizedISBN
     ? () => `details.productIds all \\"productId\\": \\"${normalizedISBN}\\"  AND details.productIds all  \\"productIdType\\": \\"${isbnId}\\"`
-    : defaultSearchFn;
+    : defaultSearchFn(customFields);
 
   const queryParamsFilterQuery = buildFilterQuery(
     queryParams,
