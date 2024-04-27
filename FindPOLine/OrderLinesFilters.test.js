@@ -1,7 +1,17 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query';
 
-import { act, render, screen } from '@folio/jest-config-stripes/testing-library/react';
-import { AcqDateRangeFilter, CUSTOM_FIELDS_FIXTURE } from '@folio/stripes-acq-components';
+import {
+  act,
+  render,
+  screen,
+} from '@folio/jest-config-stripes/testing-library/react';
+import {
+  AcqDateRangeFilter,
+  CUSTOM_FIELDS_FIXTURE,
+} from '@folio/stripes-acq-components';
 
 import { OrderLinesFilters } from './OrderLinesFilters';
 

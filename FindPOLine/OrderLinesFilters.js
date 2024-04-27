@@ -1,37 +1,35 @@
-import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 
-import {
-  AccordionSet,
-} from '@folio/stripes/components';
+import { AccordionSet } from '@folio/stripes/components';
 import {
   AcqCheckboxFilter,
+  AcqDateRangeFilter,
   AcqTagsFilter,
   AcqUnitFilter,
+  BooleanFilter,
   CUSTOM_FIELDS_FILTER,
   CustomFieldsFilters,
-  LocationFilterContainer,
-  SourceFilter,
-  ORDER_FORMAT_OPTIONS,
-  PluggableOrganizationFilter,
-  AcqDateRangeFilter,
-  BooleanFilter,
-  FundFilter,
   ExpenseClassFilter,
+  FundFilter,
+  LocationFilterContainer,
+  ORDER_FORMAT_OPTIONS,
   PluggableDonorsFilter,
+  PluggableOrganizationFilter,
   PluggableUserFilter,
+  SourceFilter,
 } from '@folio/stripes-acq-components';
 
 import AcqMethodsFilter from './AcqMethodsFilter';
-import MaterialTypeFilter from './MaterialTypeFilter';
-import PrefixFilter from './PrefixFilter';
-import SuffixFilter from './SuffixFilter';
 import {
   FILTERS,
   PAYMENT_STATUS_FILTER_OPTIONS,
   RECEIPT_STATUS_FILTER_OPTIONS,
 } from './constants';
 import { LinkedPackagePOLineFilter } from './LinkedPackagePOLineFilter';
+import MaterialTypeFilter from './MaterialTypeFilter';
+import PrefixFilter from './PrefixFilter';
+import SuffixFilter from './SuffixFilter';
 import { getDateRangeValueAsString } from './utils';
 
 const applyFiltersAdapter = (applyFilters) => ({ name, values }) => applyFilters(name, values);

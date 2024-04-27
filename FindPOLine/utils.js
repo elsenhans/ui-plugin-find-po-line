@@ -11,8 +11,14 @@ import {
   SEARCH_PARAMETER,
 } from '@folio/stripes-acq-components';
 
-import { FILTERS, QUALIFIER_SEPARATOR } from './constants';
-import { getCqlQuery, getKeywordQuery } from './OrderLinesSearchConfig';
+import {
+  FILTERS,
+  QUALIFIER_SEPARATOR,
+} from './constants';
+import {
+  getCqlQuery,
+  getKeywordQuery,
+} from './OrderLinesSearchConfig';
 
 const defaultSearchFn = (localeDateFormat, customFields = []) => (query, qindex) => {
   if (qindex === 'details.productIds') {
